@@ -30,11 +30,11 @@ export class AuthService {
     });
   }
 
-  isLoggedIn(): any {
-    return this.cookieService.get('jwt');
+  isLoggedIn(): boolean {
+    return this.cookieService.check('access_token');
   }
 
   getToken(): string {
-    return this.cookieService.get('jwt');
+    return this.cookieService.get('access_token');
   }
 }

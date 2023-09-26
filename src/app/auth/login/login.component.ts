@@ -66,11 +66,8 @@ export class LoginComponent implements OnInit {
 
   constructor(private authService: AuthService, private toastr: ToastrService, private router: Router) {
     if (this.authService.isLoggedIn()) {
-      // this.router.navigate(['/']);
-      this.toastr.success('Already logged in');
       console.log('Already logged in');
-    }else{
-      this.toastr.error('Not logged in');
+      this.router.navigate(['/']);
     }
   }
 
