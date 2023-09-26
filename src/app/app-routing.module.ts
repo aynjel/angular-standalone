@@ -1,16 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UserListComponent } from './user-list/user-list.component';
-import { UserViewComponent } from './user-view/user-view.component';
+import { BlogComponent } from './blog/blog.component';
+import { HomeComponent } from './home/home.component';
+import { UserComponent } from './user/user.component';
 
 const routes: Routes = [
   {
-    path: 'users',
-    component: UserListComponent,
+    path: '',
+    component: HomeComponent,
   },
   {
-    path: 'users/:id',
-    component: UserViewComponent,
+    path: 'blog',
+    component: BlogComponent,
+    loadChildren: () => import('./blog/blog.route').then(m => m.BLOG_ROUTES),
+  },
+  {
+    path: 'users',
+    component: UserComponent,
+    loadChildren: () => import('./user/user.route').then(m => m.USER_ROUTES),
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.route').then(m => m.AUTH_ROUTES),
   },
 ];
 
