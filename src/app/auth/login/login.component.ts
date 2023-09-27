@@ -1,27 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule} from '@angular/material/button';
-import { MatIconModule} from '@angular/material/icon';
+import { MaterialModule } from 'src/material.module';
 import { RouterModule } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/service/auth/auth.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from "@angular/router";
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
     CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
+    MaterialModule,
     ReactiveFormsModule,
     RouterModule
   ],
@@ -59,7 +52,7 @@ import { Router } from "@angular/router";
 export class LoginComponent implements OnInit {
   hide = true;
 
-  loginForm = new FormGroup({
+  loginForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required)
   });
@@ -74,16 +67,20 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmit() {
-    this.authService.login(this.loginForm.value).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.toastr.success('Login successful');
-        this.router.navigate(['/']);
-      },
-      error: (error: any) => {
-        console.log(error);
-        this.toastr.error(error.error.message);
-      }
-    });
+    if (this.loginForm.valid) {
+      this.authService.login(this.loginForm.value)
+      .subscribe({
+        next: (res: any) => {
+          this.toastr.success('Logged in successfully', 'Success');
+          this.router.navigate(['/']);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.toastr.error(err.message, 'Error');
+        }
+      });
+      console.log(this.loginForm.value);
+    } else {
+      this.toastr.error('Please enter valid details', 'Error');
+    }
   }
 }

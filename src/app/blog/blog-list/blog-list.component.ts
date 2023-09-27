@@ -1,34 +1,25 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { BlogService } from 'src/app/service/blog/blog.service';
+import { Blog, BlogService } from 'src/app/service/blog/blog.service';
+import { BlogCardComponent } from '../blog-card/blog-card.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { catchError, map, retry } from 'rxjs';
+import { MaterialModule } from 'src/material.module';
 
 @Component({
   selector: 'app-blog-list',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
+    BlogCardComponent,
+    MaterialModule
   ],
   template: `
   <section>
     <div class="container">
-      <div class="row">
-        <div class="col-sm-12 col-md-4" *ngFor="let blog of blogs">
-          <mat-card class="blog-card">
-            <mat-card-header>
-              <mat-card-title>{{blog.title}}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <p>{{blog.content}}</p>
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-raised-button color="primary">Read More</button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-      </div>
+      <app-blog-card *ngFor="let blog of blogsPerPage" [blog]="blog"></app-blog-card>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </div>
   </section>
   `,
@@ -36,31 +27,44 @@ import { BlogService } from 'src/app/service/blog/blog.service';
 })
 export class BlogListComponent {
 
-  blogs = [
-    {
-      title: 'Blog Title 1',
-      content: 'Blog Content 1',
-    },
-    {
-      title: 'Blog Title 2',
-      content: 'Blog Content 2',
-    },
-    {
-      title: 'Blog Title 3',
-      content: 'Blog Content 3',
-    }
-  ];
+  blogs: Blog[] = [];
+  blogsPerPage: Blog[] = [];
 
   constructor(private blogService: BlogService, private router: Router) { }
 
   ngOnInit(): void {
-    // this.blogService.getBlogs().subscribe(
-    //   (res: any) => {
-    //     this.blogs = res.data;
-    //   },
-    //   (err: any) => {
-    //     console.log(err);
-    //   }
-    // );
+    this.LoadBlogs();
+  }
+
+  LoadBlogs() {
+    this.blogService.getBlogs()
+    .pipe(
+      map((data: Blog[]) => {
+        return data.map((blog: Blog) => {
+          return {
+            id: blog.id,
+            title: `${blog.title} Title`,
+            content: blog.content,
+          };
+        });
+      }),
+      retry(3),
+      catchError((err: HttpErrorResponse) => {
+        console.log(err);
+        return [];
+      })
+    )
+    .subscribe({
+      next: (data: Blog[]) => {
+        this.blogs = data;
+        this.blogsPerPage = this.blogs.reverse().slice(0, 3);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err);
+      },
+      complete: () => {
+        console.log('Completed');
+      }
+    });
   }
 }

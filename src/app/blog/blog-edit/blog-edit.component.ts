@@ -8,9 +8,10 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from "@angular/router";
 import { BlogService } from 'src/app/service/blog/blog.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-create-blog',
+  selector: 'app-blog-edit',
   standalone: true,
   imports: [
     CommonModule,
@@ -19,8 +20,8 @@ import { HttpErrorResponse } from '@angular/common/http';
     ReactiveFormsModule,
   ],
   template: `
-  <section>
-    <form [formGroup]="createBlogForm" (ngSubmit)="onSubmit()">
+    <section>
+    <form [formGroup]="editBlogForm" (ngSubmit)="onSubmit()">
       <div class="container">
         <mat-form-field appearance="outline">
           <mat-label>Title</mat-label>
@@ -30,41 +31,42 @@ import { HttpErrorResponse } from '@angular/common/http';
           <mat-label>Content</mat-label>
           <textarea matInput placeholder="Content" formControlName="content"></textarea>
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Create</button>
+        <button mat-raised-button color="primary" type="submit">Edit</button>
         <div class="bottom-link">
-          <a [routerLink]="['/blog']" class="back-link">Back</a>
+          <a [routerLink]="['/blog', blogId]" class="back-link">Back</a>
         </div>
       </div>
     </form>
   </section>
   `,
-  styleUrls: ['./create-blog.component.scss']
+  styleUrls: ['./blog-edit.component.scss']
 })
-export class CreateBlogComponent implements OnInit {
+export class BlogEditComponent implements OnInit {
 
-  createBlogForm: FormGroup = new FormGroup({
+  blogId: number = 0;
+
+  editBlogForm: FormGroup = new FormGroup({
     title: new FormControl('', Validators.required),
     content: new FormControl('', Validators.required)
   });
 
-  constructor(private toastr: ToastrService, private router: Router, private blogService: BlogService) { }
+  constructor(private toastr: ToastrService, private router: Router, private blogService: BlogService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.blogId = this.route.snapshot.params['id'];
   }
 
   onSubmit() {
-    if (this.createBlogForm.valid) {
-      this.blogService.createBlog(this.createBlogForm.value).subscribe({
+    if (this.editBlogForm.valid) {
+      this.blogService.editBlog(this.editBlogForm.value).subscribe({
         next: (res: any) => {
           this.toastr.success(res.messsage, 'Success');
           this.router.navigate(['/blog']);
         },
         error: (err: HttpErrorResponse) => {
-          this.toastr.error(err.message, 'Error');
+          this.toastr.error(err.error.message, 'Error');
         }
       });
-    } else {
-      this.toastr.error('Please enter valid details', 'Error');
     }
   }
 

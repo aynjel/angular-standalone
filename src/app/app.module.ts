@@ -7,10 +7,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule} from 'src/material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from "ngx-toastr";
+import { CustomPipePipe } from './pipe/custom-pipe.pipe';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CustomPipePipe
   ],
   imports: [
     BrowserModule,
@@ -20,7 +22,6 @@ import { ToastrModule } from "ngx-toastr";
     HttpClientModule,
     ToastrModule.forRoot()
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
