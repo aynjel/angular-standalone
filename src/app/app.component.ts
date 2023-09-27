@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { AuthService } from './service/auth/auth.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,39 +12,42 @@ import { Component } from '@angular/core';
         Home
       </a>
 
-      <ul>
+      <ul *ngIf="isLoggedIn">
         <li>
-          <a [routerLink]="['/users']">
+          <a [routerLink]="['/users']" class="nav-link">
             Users
           </a>
         </li>
         <li>
-          <a [routerLink]="['/blog']">
+          <a [routerLink]="['/blog']" class="nav-link">
             Blog
           </a>
         </li>
       </ul>
 
-      <ul>
+      <ul *ngIf="!isLoggedIn">
         <li>
-          <a [routerLink]="['/profile']">
-            Profile
-          </a>
-        </li>
-        <li>
-          <a [routerLink]="['/auth/login']">
+          <a [routerLink]="['/auth/login']" class="nav-link">
             Login
           </a>
         </li>
         <li>
-          <a [routerLink]="['/auth/register']">
+          <a [routerLink]="['/auth/register']" class="nav-link">
             Register
           </a>
         </li>
+      </ul>
+
+      <ul *ngIf="isLoggedIn">
         <li>
-          <a [routerLink]="['/logout']">
+          <button routerLink="/auth/profile" class="nav-link">
+            Profile
+          </button>
+        </li>
+        <li>
+          <button (click)="OnLogout()" class="nav-link">
             Logout
-          </a>
+          </button>
         </li>
       </ul>
     </nav>
@@ -53,5 +59,28 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'angular-standalone';
+  title = 'angular-auth';
+
+  isLoggedIn: boolean;
+
+  constructor(private authService: AuthService, private toastr: ToastrService, private router: Router) {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
+
+  OnLogout() {
+    this.authService.logout().subscribe(
+      (res: any) => {
+        this.isLoggedIn = false;
+        this.toastr.success('Logout successful');
+        this.router.navigate(['/']);
+      },
+      (err: any) => {
+        console.log(err);
+      }
+    );
+  }
+
+  OnProfile() {
+    this.router.navigate(['/auth/profile']);
+  }
 }

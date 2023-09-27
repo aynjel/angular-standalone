@@ -37,4 +37,10 @@ export class AuthService {
   getToken(): string {
     return this.cookieService.get('access_token');
   }
+
+  getUserDetails(): any {
+    return this.http.get(`${this.apiURL}/user`, {
+      withCredentials: true
+    });
+  }
 }

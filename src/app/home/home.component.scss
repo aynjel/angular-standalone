@@ -1,0 +1,25 @@
+section{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+h1{
+    font-size: 3rem;
+    color: #0f1e63;
+    margin-bottom: 20px;
+}
+
+h2{
+    font-size: 2rem;
+    color: #0f1e63;
+    margin-bottom: 20px;
+}
+
+p{
+    font-size: 1.5rem;
+    color: #0f1e63;
+    margin-bottom: 20px;
+}

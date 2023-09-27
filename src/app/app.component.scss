@@ -24,7 +24,13 @@ header{
             li{
                 list-style: none;
 
-                a{
+                button.nav-link{
+                    border: 0;
+                    background-color: transparent;
+                    text-decoration: none;
+                }
+
+                .nav-link{
                     text-decoration: none;
                     color: #0f1e63;
                     font-weight: bold;
