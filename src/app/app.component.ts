@@ -1,57 +1,11 @@
 import { Component } from '@angular/core';
-import { AuthService } from './service/auth/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { UIService } from './service/UI/ui.service';
 
 @Component({
   selector: 'app-root',
   template: `
-  <header>
-    <nav>
-      <a [routerLink]="['/']">
-        Home
-      </a>
-
-      <ul *ngIf="isLoggedIn">
-        <li>
-          <a [routerLink]="['/users']" class="nav-link">
-            Users
-          </a>
-        </li>
-        <li>
-          <a [routerLink]="['/blog']" class="nav-link">
-            Blog
-          </a>
-        </li>
-      </ul>
-
-      <ul *ngIf="!isLoggedIn">
-        <li>
-          <a [routerLink]="['/auth/login']" class="nav-link">
-            Login
-          </a>
-        </li>
-        <li>
-          <a [routerLink]="['/auth/register']" class="nav-link">
-            Register
-          </a>
-        </li>
-      </ul>
-
-      <ul *ngIf="isLoggedIn">
-        <li>
-          <button routerLink="/auth/profile" class="nav-link">
-            Profile
-          </button>
-        </li>
-        <li>
-          <button (click)="OnLogout()" class="nav-link">
-            Logout
-          </button>
-        </li>
-      </ul>
-    </nav>
-  </header>
+    <app-header></app-header>
+    
     <main>
       <router-outlet></router-outlet>
     </main>
@@ -61,26 +15,21 @@ import { Router } from '@angular/router';
 export class AppComponent {
   title = 'angular-auth';
 
-  isLoggedIn: boolean;
+  
 
-  constructor(private authService: AuthService, private toastr: ToastrService, private router: Router) {
-    this.isLoggedIn = this.authService.isLoggedIn();
+  isLoading: boolean = false;
+
+  constructor(public uiService: UIService) {
+
   }
 
-  OnLogout() {
-    this.authService.logout().subscribe(
-      (res: any) => {
-        this.isLoggedIn = false;
-        this.toastr.success('Logout successful');
-        this.router.navigate(['/']);
-      },
-      (err: any) => {
-        console.log(err);
+  ngOnInit() {
+    this.uiService.loading$.subscribe({
+      next: (res: boolean) => {
+        this.isLoading = res;
       }
-    );
+    });
   }
 
-  OnProfile() {
-    this.router.navigate(['/auth/profile']);
-  }
+  
 }

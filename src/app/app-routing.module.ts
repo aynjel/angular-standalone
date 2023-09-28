@@ -3,11 +3,17 @@ import { RouterModule, Routes } from '@angular/router';
 import { BlogComponent } from './blog/blog.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
+import { TodoComponent } from './todo/todo.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+  },
+  {
+    path: 'todos',
+    component: TodoComponent,
+    loadChildren: () => import('./todo/todo.route').then(m => m.TODO_ROUTES),
   },
   {
     path: 'blog',

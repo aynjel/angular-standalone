@@ -71,12 +71,12 @@ export class LoginComponent implements OnInit {
       this.authService.login(this.loginForm.value)
       .subscribe({
         next: (res: any) => {
-          this.toastr.success('Logged in successfully', 'Success');
+          this.toastr.success(res.message, 'Success');
           this.router.navigate(['/']);
         },
         error: (err: HttpErrorResponse) => {
-          this.toastr.error(err.message, 'Error');
-        }
+          this.toastr.error(err.error.message, 'Error');
+        },
       });
       console.log(this.loginForm.value);
     } else {

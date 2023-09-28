@@ -7,21 +7,25 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule} from 'src/material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from "ngx-toastr";
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { CustomPipePipe } from './pipe/custom-pipe.pipe';
+import { HeaderComponent } from "./component/header/header.component";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    CustomPipePipe
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MaterialModule,
-    HttpClientModule,
-    ToastrModule.forRoot()
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        CustomPipePipe
+    ],
+    bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MaterialModule,
+        HttpClientModule,
+        ToastrModule.forRoot(),
+        SweetAlert2Module.forRoot(),
+        HeaderComponent,
+    ]
 })
 export class AppModule { }
