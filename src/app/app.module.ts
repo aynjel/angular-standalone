@@ -12,6 +12,7 @@ import { CustomPipePipe } from './pipe/custom-pipe.pipe';
 import { HeaderComponent } from "./component/header/header.component";
 import { LoadingComponent } from './component/loading/loading.component';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     declarations: [
@@ -29,6 +30,7 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
         SweetAlert2Module.forRoot(),
         HeaderComponent,
         LoadingComponent,
+        FontAwesomeModule,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
