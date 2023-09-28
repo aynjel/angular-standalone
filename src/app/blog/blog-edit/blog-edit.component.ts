@@ -31,7 +31,7 @@ import { ActivatedRoute } from '@angular/router';
           <mat-label>Content</mat-label>
           <textarea matInput placeholder="Content" formControlName="content"></textarea>
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Edit</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!editBlogForm.valid">Edit</button>
         <div class="bottom-link">
           <a [routerLink]="['/blog', blogId]" class="back-link">Back</a>
         </div>
@@ -50,21 +50,46 @@ export class BlogEditComponent implements OnInit {
     content: new FormControl('', Validators.required)
   });
 
-  constructor(private toastr: ToastrService, private router: Router, private blogService: BlogService, private route: ActivatedRoute) { }
+  constructor(
+    private toastr: ToastrService, 
+    private router: Router, 
+    private blogService: BlogService, 
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     this.blogId = this.route.snapshot.params['id'];
+    this.blogService.getBlog(this.blogId).subscribe({
+      next: data => {
+        this.editBlogForm.setValue({
+          title: data.title,
+          content: data.content
+        });
+        console.log(data);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.toastr.error(err.message, 'Error');
+        console.log(err);
+      }
+    });
   }
 
   onSubmit() {
     if (this.editBlogForm.valid) {
-      this.blogService.editBlog(this.editBlogForm.value).subscribe({
+      const blog = {
+        id: this.blogId,
+        title: this.editBlogForm.value.title,
+        content: this.editBlogForm.value.content
+      };
+      this.blogService.editBlog(blog).subscribe({
         next: data => {
           this.toastr.success('Blog edited successfully', 'Success');
           this.router.navigate(['/blog', this.blogId]);
+          console.log(data);
         },
         error: (err: HttpErrorResponse) => {
-          this.toastr.error(err.error.message, 'Error');
+          this.toastr.error(err.message, 'Error');
+          console.log(err);
         }
       });
     }

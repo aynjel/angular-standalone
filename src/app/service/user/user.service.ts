@@ -24,11 +24,31 @@ export class UserService {
 
   users: User[] = [];
 
+  headerOptions = {
+    withCredentials: true
+  };
+
   constructor(
     private http: HttpClient
   ) { }
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+    return this.http.get<User[]>(this.apiUrl, this.headerOptions);
+  }
+
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`, this.headerOptions);
+  }
+
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user, this.headerOptions);
+  }
+
+  updateUser(user: User): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${user.id}`, user, this.headerOptions);
+  }
+
+  deleteUser(id: number): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/${id}`, this.headerOptions);
   }
 }

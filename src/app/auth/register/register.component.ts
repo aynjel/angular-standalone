@@ -1,33 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule} from '@angular/material/button';
-import { MatIconModule} from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatRadioModule } from "@angular/material/radio";
+import { MaterialModule } from 'src/material.module';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'src/app/service/auth/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
     CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatRadioModule,
+    MaterialModule,
     ReactiveFormsModule,
     RouterModule
   ],
@@ -75,12 +60,12 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
-              <mat-radio-group aria-label="Select an option">
+              <mat-radio-group aria-label="Select an option" formControlName="gender">
                 <mat-radio-button value="Male">Male</mat-radio-button>
                 <mat-radio-button value="Female">Female</mat-radio-button>
               </mat-radio-group>
             </div>
-            <button mat-raised-button color="primary"type="submit">
+            <button mat-raised-button color="primary" type="submit">
               Register
             </button>
             <div class="bottom-link">
@@ -93,6 +78,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   `,
   styleUrls: ['./register.component.scss']
 })
+
 export class RegisterComponent implements OnInit{
   hide = true;
   educations = [
@@ -103,19 +89,36 @@ export class RegisterComponent implements OnInit{
 
   registerForm = new FormGroup({
     name: new FormControl('', Validators.required),
-    email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     education: new FormControl('', Validators.required),
-    company: new FormControl('', Validators.required),
+    dob: new FormControl('', Validators.required),
     gender: new FormControl('', Validators.required),
-    dob: new FormControl('', Validators.required)
+    company: new FormControl('', Validators.required),
   });
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private toastr: ToastrService,
+    private route: Router
+  ) { }
 
   ngOnInit(): void { }
 
   onSubmit() {
-    // this.authService.register(this.registerForm.value);
+    console.log(this.registerForm.value);
+    if (this.registerForm.invalid) {
+      this.authService.register(this.registerForm.value).subscribe({
+        next: data => {
+          this.toastr.success('Registration successful!');
+          console.log(data);
+          this.route.navigate(['/auth/login']);
+        },
+        error: error => {
+          this.toastr.error('Registration failed!');
+          console.error('There was an error!', error);
+        }
+      });
+    }
   }
 }

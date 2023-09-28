@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 
 export interface Login {
@@ -12,6 +12,10 @@ export interface Register {
   name: string;
   email: string;
   password: string;
+  education: string;
+  dob: string;
+  gender: string;
+  company: string;
 }
 
 @Injectable({
@@ -30,27 +34,29 @@ export class AuthService {
   registerData: Register = {
     name: '',
     email: '',
-    password: ''
+    password: '',
+    education: '',
+    dob: '',
+    gender: '',
+    company: ''
+  };
+
+  headerOptions = {
+    withCredentials: true
   };
 
   constructor(private http: HttpClient, private cookieService: CookieService) { }
 
   login(data: Login): Observable<any> {
-    return from(this.http.post(`${this.apiURL}/login`, data, {
-      withCredentials: true
-    }));
+    return this.http.post(`${this.apiURL}/login`, data, this.headerOptions);
   }
 
-  register(data: Register): Observable<any> {
-    return from(this.http.post(`${this.apiURL}/register`, data, {
-      withCredentials: true
-    }));
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.apiURL}/register`, data, this.headerOptions);
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${this.apiURL}/logout`, {}, {
-      withCredentials: true
-    });
+    return this.http.post(`${this.apiURL}/logout`, {}, this.headerOptions);
   }
 
   isLoggedIn(): boolean {

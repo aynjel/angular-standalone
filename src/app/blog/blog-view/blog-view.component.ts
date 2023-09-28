@@ -4,7 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { MaterialModule } from 'src/material.module';
 import { RouterModule } from '@angular/router';
 import { Blog, BlogService } from 'src/app/service/blog/blog.service';
-
+import { ToastrService } from 'ngx-toastr';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-blog-view',
@@ -34,8 +35,11 @@ import { Blog, BlogService } from 'src/app/service/blog/blog.service';
           <button mat-raised-button color="accent" [routerLink]="['/blog']">
             Back
           </button>
-          <button mat-raised-button color="dark" [routerLink]="['/blog/edit', blogId]">
+          <button mat-raised-button color="primary" [routerLink]="['/blog/edit', blogId]">
             Edit
+          </button>
+          <button mat-raised-button color="warn" (click)="deleteBlog()">
+            Delete
           </button>
         </mat-card-actions>
       </mat-card>
@@ -53,7 +57,7 @@ export class BlogViewComponent implements OnInit {
     content: '',
   };
 
-  constructor(private route: ActivatedRoute, private blogService: BlogService) { }
+  constructor(private toastr: ToastrService, private router: Router, private route: ActivatedRoute, private blogService: BlogService) { }
 
   ngOnInit(): void {
     this.blogId = this.route.snapshot.params['id'];
@@ -65,9 +69,28 @@ export class BlogViewComponent implements OnInit {
     .subscribe({
       next: (data: any) => {
         this.blogDetails = data;
-        // console.log(data);
+        console.log(data);
       },
       error: (err: any) => {
+        this.toastr.error(err.message, 'Error');
+        console.log(err);
+      },
+      complete: () => {
+        console.log('Completed');
+      }
+    });
+  }
+
+  deleteBlog() {
+    this.blogService.deleteBlog(this.blogId)
+    .subscribe({
+      next: (data: any) => {
+        this.toastr.success('Blog deleted successfully', 'Success');
+        this.router.navigate(['/blog']);
+        console.log(data);
+      },
+      error: (err: any) => {
+        this.toastr.error(err.message, 'Error');
         console.log(err);
       },
       complete: () => {
