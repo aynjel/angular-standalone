@@ -4,6 +4,7 @@ import { BlogComponent } from './blog/blog.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { TodoComponent } from './todo/todo.component';
+import { BmiComponent } from './bmi/bmi.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
     path: 'blog',
     component: BlogComponent,
     loadChildren: () => import('./blog/blog.route').then(m => m.BLOG_ROUTES),
+  },
+  {
+    path: 'bmi',
+    component: BmiComponent,
   },
   {
     path: 'users',

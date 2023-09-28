@@ -59,9 +59,9 @@ export class BlogEditComponent implements OnInit {
   onSubmit() {
     if (this.editBlogForm.valid) {
       this.blogService.editBlog(this.editBlogForm.value).subscribe({
-        next: (res: any) => {
-          this.toastr.success(res.messsage, 'Success');
-          this.router.navigate(['/blog']);
+        next: data => {
+          this.toastr.success('Blog edited successfully', 'Success');
+          this.router.navigate(['/blog', this.blogId]);
         },
         error: (err: HttpErrorResponse) => {
           this.toastr.error(err.error.message, 'Error');
